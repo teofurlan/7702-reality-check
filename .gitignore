@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# scan output lands in the working directory; the published dataset lives in data/
+/confirm-output.json

@@ -1,0 +1,18 @@
+{
+  "name": "7702-reality-check",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Measures whether EIP-7702 delegation volume comes from real accounts or from automated address pools.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "recover": "node scripts/recover.mjs",
+    "compare": "node scripts/compare.mjs",
+    "confirm": "node scripts/confirm.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.56.6"
+  }
+}
