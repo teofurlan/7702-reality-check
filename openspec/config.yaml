@@ -1,0 +1,65 @@
+project: 7702-reality-check
+detected: 2026-09-17
+
+context: |
+  EIP-7702 measurement + classification tool for a 10-day hackathon
+  (deadline 2026-09-27). PROJECT.md (350 lines) is the locked design doc —
+  read it before any proposal/design work. Node >=22 ESM package, single
+  runtime dependency viem ^2.56.6. scripts/*.mjs (recover, compare, confirm)
+  are throwaway measurement spikes reading a public JSON-RPC endpoint, not
+  production code. data/confirm-output.json holds real measured output from
+  a 3,000-block mainnet scan. No frontend scaffolded yet (React + Vite is
+  planned per PROJECT.md's stack table but not present in the repo).
+
+  Planning constraint that outranks convenience: the artifacts produced by
+  SDD phases must remain executable by weaker models from other vendors
+  (Gemini, older Claude versions). Prose does not transfer across models;
+  frozen contracts, golden fixtures, and exact per-task acceptance commands
+  do. Prefer a failing test over a warning paragraph every time.
+
+persistence:
+  mode: hybrid
+  engram_topic: sdd-init/7702-reality-check
+  openspec_path: openspec/config.yaml
+
+strict_tdd: true
+strict_tdd_requested: true
+strict_tdd_resolution_reason: >
+  sdd-init initially failed closed to false because package.json defined no
+  "test" script. The orchestrator then established the workspace-level test
+  command directly: package.json now defines "test": "node --test", verified
+  on Node v22.17.0 (zero test files present exits 0, so the command is safe
+  before the first test exists). The fail-closed condition no longer holds,
+  so strict_tdd is resolved to true and every downstream phase inherits it.
+
+testing:
+  workspace_level_command: "npm test"
+  recommended_workspace_command: "npm test"
+  recommendation_rationale: >
+    Node >=22 is already a required engine, so node:test and node:assert
+    are zero-install, zero-dependency, zero-config. The plan's explicit
+    goal is that weaker models from other vendors keep implementing from
+    these artifacts; every added config file (vitest.config, jest.config,
+    babel config, etc.) is one more thing a weaker model can misconfigure.
+    The built-in runner needs none of that — only a "test" script and
+    *.test.mjs files colocated with or near the code under test.
+  naming_convention: "*.test.mjs, colocated with or adjacent to the code under test"
+  verified_on: "Node v22.17.0, 2026-09-17"
+  projects:
+    - path: "."
+      stack: "Node.js ESM (type: module), engines.node >= 22, single dep viem ^2.56.6"
+      test_command: "npm test"
+      framework: "node:test + node:assert/strict (built-in, no install)"
+      coverage_command_recommended: "node --test --experimental-test-coverage"
+      linter: "none detected (no .eslintrc*/eslint.config.*)"
+      type_checker: "none detected (no tsconfig.json; plain JS project)"
+      formatter: "none detected (no .prettierrc*)"
+
+phases:
+  proposal: "Read PROJECT.md fully before any proposal; it is a locked design doc, not a draft — do not re-litigate its decisions without explicit user request."
+  spec: "Base specs on the pipeline described in PROJECT.md (block scan -> filter type-4 -> recover authority -> dedupe -> balance sample -> aggregate signals -> JSON artifact). Every requirement must carry an executable acceptance criterion, not a prose description."
+  design: "Preserve the constraint that browser payload stays small/pre-aggregated; heavy recovery/dedup/aggregation work happens offline in scripts, never in the browser."
+  tasks: "Every task must name exact files, exact function signatures, and the exact command that proves it done. Document known traps (notably strided block sampling) as failing tests, never as prose warnings."
+  apply: "Strict TDD is active. Test command: npm test. Follow red -> green -> refactor for all new/changed behavior; do not fall back to Standard Mode."
+  verify: "Verify against npm test output. Numbers asserted by tests must match the measured figures recorded in PROJECT.md."
+  archive: "Standard archive; no special handling required for this project."
