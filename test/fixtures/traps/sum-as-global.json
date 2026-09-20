@@ -1,0 +1,45 @@
+{
+  "description": "Trap C: authority 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 signs authorization tuples to 2 distinct contracts with the same private key; no other cross-contract overlap. Asserts distinctGlobalAuthorityCount is a union, not a sum.",
+  "authority": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "contracts": [
+    "0x1111111111111111111111111111111111111111",
+    "0x2222222222222222222222222222222222222222"
+  ],
+  "fromBlock": 1,
+  "toBlock": 1,
+  "recorded": {
+    "eth_getBlockByNumber|[\"0x1\",true]": {
+      "number": "0x1",
+      "transactions": [
+        {
+          "type": "0x4",
+          "from": "0xffffffffffffffffffffffffffffffffffffffff",
+          "authorizationList": [
+            {
+              "address": "0x1111111111111111111111111111111111111111",
+              "chainId": "0x1",
+              "nonce": "0x0",
+              "r": "0xae3ce0f5deec815c0978f060a4444485f277c3f47b1a465ce368e34e426f49ee",
+              "s": "0x3e9f8631a03543dba183dd8255fa32062b616acc76f5dd8a59987cd47cf8468c",
+              "yParity": "0x1"
+            }
+          ]
+        },
+        {
+          "type": "0x4",
+          "from": "0xffffffffffffffffffffffffffffffffffffffff",
+          "authorizationList": [
+            {
+              "address": "0x2222222222222222222222222222222222222222",
+              "chainId": "0x1",
+              "nonce": "0x1",
+              "r": "0x76ccf28c9fcd883d5837ae3c98cc9a6b9ffef1083c1d7a9f2de27a48b2723bc2",
+              "s": "0x6635a0f7ed436d386f49e75ba5c284fb09b1e314ef71aee4732bca927fb9a8c3",
+              "yParity": "0x0"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

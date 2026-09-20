@@ -1,0 +1,25 @@
+{
+  "delegate": "0xdddddddddddddddddddddddddddddddddddddddd",
+  "relayer": "0xffffffffffffffffffffffffffffffffffffffff",
+  "blocks": [
+    {
+      "number": "0x1",
+      "transactions": [
+        {
+          "type": "0x4",
+          "from": "0xffffffffffffffffffffffffffffffffffffffff",
+          "authorizationList": [
+            {
+              "address": "0xdddddddddddddddddddddddddddddddddddddddd",
+              "chainId": "0x1",
+              "nonce": "0x0",
+              "r": "0x1111111111111111111111111111111111111111111111111111111111111111",
+              "s": "0x2222222222222222222222222222222222222222222222222222222222222222",
+              "yParity": "0x0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

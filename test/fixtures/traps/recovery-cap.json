@@ -1,0 +1,199 @@
+{
+ "description": "Trap D: 4000 distinct recoverable authorization tuples for one contract (0x3333333333333333333333333333333333333333), each signed by a distinct deterministic throwaway private key. Asserts the recovered unique-authority count reflects all of them with no fixed ceiling (e.g. no slice(0, 3000)).",
+ "delegate": "0x3333333333333333333333333333333333333333",
+ "tuples": [
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x0",
+   "r": "0xe2bf3b5e65d7d02c0506a41bf583e5f64f35631f894fd46a095184d7d55507dd",
+   "s": "0x319ce8d7fd2aae578fb599835b0ad92e939d8b1bf34186afcc157b4d06c42304",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x1",
+   "r": "0x0fd32c7e6ff02b1bfb4475eb3506f4371f4c260ec46a800b719290b68ed1e9ad",
+   "s": "0x47852c40e126fe7f2f8e1baf70c1833381d9c88e4a3ebc269944d46939996fec",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x2",
+   "r": "0xeceb58018f0ce50aca43a45cae0849f97283be7f34a9dbe41699689a8ae12f94",
+   "s": "0x008d93ffad5632948f4883660617044308c407424c50325e859b86bdade6ce20",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x3",
+   "r": "0x32c39688b800b776f0a54f9e4569bc6788a6734c1298198704663ff5583fbf32",
+   "s": "0x6f78cf9314a11119e81631da9f6f31cc53072b72e5f99f1626aab19d7e0c6e8a",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x4",
+   "r": "0x21272a06491540aab7a9de1906bb386c2a9453b6d2ea8cf41e43944dd104abb9",
+   "s": "0x1b22ac277fe3d4ee300c0308cf202be1d222703df42c16b40d217d57bfea6e16",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x5",
+   "r": "0x6314d773258bcf323b5458191c1bc6bfc938f771bc801929a4b78a717a3a56d7",
+   "s": "0x26bea57ac216514022f6e8e6132644acff693869aa08c6157161c17167d80141",
+   "yParity": "0x1"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x6",
+   "r": "0xa88b42de9dd355d463a183c652381db7c24bbb2799323d128171026d45f10b77",
+   "s": "0x0a2027140d18dbdc6b8e093f5204a14de506e1b69c81a0ab66e516df043f2630",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x7",
+   "r": "0xce0fd37eab71e52ab059d99be0f5e8804bd98003efb7b347f27309ca459407b5",
+   "s": "0x3a2f0e54f201d329241dd22b57f32a0c266551318e5ae89083965026ed8d7807",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x8",
+   "r": "0xb12a85ac384187df0028a5af4fb12c2c658fbbf8d7c27aa31291a7cf35e6fffe",
+   "s": "0x376f04430ed02d00a6788c008502d2feabd002b74d8c69412e1370edf8ee0862",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x9",
+   "r": "0xd649c53190036315406eff4486219888df74ff7d025621f6cfced5a985c00b37",
+   "s": "0x0dcf052b55c9e99b3c60678acc3c13ade5e803c869c01cde5b66fedbca3b61ed",
+   "yParity": "0x1"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xa",
+   "r": "0x8c50739e81c4de37f8ead638eb9cd1d1231a0c82e2bfc4c566f7f3efe0809007",
+   "s": "0x6930753f9a508ec0c241d9dbe448dd1036f11d4274c4d5a2a6af5cb22e5d5704",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xb",
+   "r": "0xb17a0fe74768ec88d511d781e5c5a5f5545c9a5cb280b2c50e9aeaf1e4acfa2a",
+   "s": "0x74158d883d86c6183504bcd27d6e9353ea1b9670576826994f09a664c06bfb65",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xc",
+   "r": "0xc48829ad87fabbfa3e2f49a140c7d10c2db3cc94c86abe14b7518155eed15ac5",
+   "s": "0x30f5a7490a81420da347be793ac5c41f30dbbe39fb08c7326a91907aa3bc371a",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xd",
+   "r": "0xe52ea34ceaeb47756261df21bd768ce0122af38d495752faafaf42972c1f1fe3",
+   "s": "0x5f23bdaa25a70236ea4fe73c28bda428e1cb452862f699e3cb207df7aea5f06b",
+   "yParity": "0x1"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xe",
+   "r": "0x2c7d1bee6026928e408e8369adfb45a460987575e9288f3518a2188eb0e08db0",
+   "s": "0x2363d516c39a9ed9306bdde50406918ac8dd9b8f9d0c4e0ccd4ded7818787998",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0xf",
+   "r": "0xd0e8ca7c53d10db0f3280354e546fd3cf7602510cb028fc4c8e865c48e89f129",
+   "s": "0x69b5e5891ef4ed74c344a9f79f6812da54bb2ad1f46f3cdab861e54effab7993",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x10",
+   "r": "0xa6224ce76618156c615e04fb7f2108043b49e332ead17eee722b47a143b00f66",
+   "s": "0x10dc57d0b8561d8f3bb99dfe2febfcc41d8f524fc53cd3d1bb7b3ee168410208",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x11",
+   "r": "0x0dc5cc3e4c2615f9122eea5d3f8c3e0e8462022f420deab955c67429c1133f12",
+   "s": "0x6cabe8949650697d38f987093c44ead36ccda1f2d1a0d9d28f98c5bf18401abc",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x12",
+   "r": "0x816ca130895f974f823e55f83bf154ea5306269f3fd8ef0d8dea3e487e047ddf",
+   "s": "0x61b7ba7ec230502429fbe68e1913f5c9f447c7bae019dc4881cefc9c72a1661e",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x13",
+   "r": "0x7efc615aa6af01ed0a51b3730d0915de25407a4ee6ef0388680e50c109f0b0aa",
+   "s": "0x67ba48d5923b3eac5beb8b757d0af0ea3c4ba9fd59729cbb5dd674346e5aa296",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x14",
+   "r": "0xd6dd03e53961708ff8c6752d5b3c7d2d72af03636759f4edcead1f3496b3abb1",
+   "s": "0x5e8782ce3cbbd88d73775ab431041cf1246051bb3067faefe5d4866f4ad8c31d",
+   "yParity": "0x1"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x15",
+   "r": "0xb5fdfe8ab1ffd2854a2f82559e5cdd592defd94bf4233ef42f6a7eb4a9569e23",
+   "s": "0x7432f07604685af2f38962c2a9c169dac2713ad4869760138484b7e6b3bdd6e2",
+   "yParity": "0x0"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x16",
+   "r": "0xc1b1904087bf0dd3bdef8d4bd26b6ca8b936cb626fafdd3c15b1183d5bd9c5ac",
+   "s": "0x5b22ad1109364d474645ce85da50c5c8cbe8bda169ac4dda094cae6fcbd30772",
+   "yParity": "0x1"
+  },
+  {
+   "address": "0x3333333333333333333333333333333333333333",
+   "chainId": "0x1",
+   "nonce": "0x17",
+   "r": "0x58a719ec9233f33e14539beceb8f115e92a98962a42eaafc39c558dd787529cd",
+   "s": "0x3c28c5db6043f3ab40d83d03ce3f1a7c6302f1e4cb983b2139ea2260dc6f20d2",
+   "yParity": "0x0"
+  }
+ ],
+ "_note": "Hand-authored synthetic trap fixture. Deterministic viem-signed tuples with distinct throwaway keys. Kept deliberately small: Trap D proves the ABSENCE of truncation, and a source-level no-slice assertion proves that for every N, which a large behavioural fixture cannot. Size here only needs to exceed maxTuples in the throw test."
+}
