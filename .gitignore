@@ -6,3 +6,6 @@ dist/
 
 # scan output lands in the working directory; the published dataset lives in data/
 /confirm-output.json
+
+# agent tooling cache — session notes and a generated skill index, not project source
+.atl/
