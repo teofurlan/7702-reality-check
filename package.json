@@ -2,6 +2,7 @@
   "name": "7702-reality-check",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Measures whether EIP-7702 delegation volume comes from real accounts or from automated address pools.",
   "type": "module",
   "engines": {

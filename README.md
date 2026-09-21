@@ -275,3 +275,9 @@ than hidden.
 - A single-operator contract is not evidence of crime, and this tool never says
 it is.
 
+## License
+
+MIT — see [LICENSE](LICENSE). Reproducibility is this project's defence, so the
+scripts, the fixtures and the measured dataset are all free to run, copy and
+check.
+
