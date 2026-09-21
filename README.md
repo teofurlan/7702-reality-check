@@ -62,6 +62,30 @@ authorizations):
 
 ---
 
+## Who this is for, and what it changes
+
+The corrected count matters to anyone allocating attention on the basis of the
+published one: a security vendor sizing an incident, a journalist repeating a
+figure, a wallet team deciding whether to ship a warning, a researcher using
+delegation volume as a proxy for adoption.
+
+What the data supports is narrow and specific: **authorization volume is a bad
+proxy for exposure.** Across the 37 classified contracts, 368 of 3,285 sampled
+authorities hold any balance at all, and 84.02 % of the sampled ETH sits on the
+organic side — the 12.35 % of volume coming from contracts with many independent
+relayers. The 83.32 % of volume flowing through single-operator contracts is
+where almost none of the money is.
+
+So ranking delegate contracts by authorization count ranks them by how automated
+they are, not by how much is at stake on them. That is the decision this
+measurement changes, and it is the only one it claims to.
+
+It does **not** say the single-operator contracts are harmless. Automation is not
+intent, and 10.46 ETH is not zero. It says the two are not the same quantity, and
+that the published figures have been reporting them as one.
+
+---
+
 ## Why this is hard
 
 Published EIP-7702 figures — tens of millions of "delegated wallets", hundreds
