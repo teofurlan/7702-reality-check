@@ -47,12 +47,12 @@ export function MetricsBar({ data }: MetricsBarProps) {
   }, [data.contracts]);
 
   return (
-    <section className="border-y border-hairline bg-surface-1/40 backdrop-blur-md">
+    <section className="relative border-y border-hairline bg-surface-1/55 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 py-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 md:divide-x md:divide-hairline">
           {/* Metric 1 */}
           <div className="flex flex-col items-start md:items-center text-left md:text-center px-0 md:px-4">
-            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-ink-muted font-mono tabular-nums">
+            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-volume-text font-mono tabular-nums">
               {data.totalAuths.toLocaleString()}
             </span>
             <span className="text-xs font-mono text-ink-subtle uppercase tracking-wider mt-1">
@@ -74,13 +74,13 @@ export function MetricsBar({ data }: MetricsBarProps) {
 
           {/* Metric 3: Inflation */}
           <div className="flex flex-col items-start md:items-center text-left md:text-center px-0 md:px-4">
-            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-amber-400 font-mono tabular-nums">
+            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-automation-text font-mono tabular-nums">
               {data.globalRedelegation.toFixed(2)}×
             </span>
-            <span className="text-xs font-mono text-amber-300/80 uppercase tracking-wider mt-1">
+            <span className="text-xs font-mono text-automation-text/80 uppercase tracking-wider mt-1">
               Re-delegation Gap
             </span>
-            <span className="text-xs text-amber-300 mt-0.5">
+            <span className="text-xs text-automation-text mt-0.5">
               {worstRedelegation !== null
                 ? `Up to ${worstRedelegation.toFixed(0)}× per contract`
                 : 'Per-contract worst case unavailable'}
@@ -89,13 +89,13 @@ export function MetricsBar({ data }: MetricsBarProps) {
 
           {/* Metric 4: Economic separation */}
           <div className="flex flex-col items-start md:items-center text-left md:text-center px-0 md:px-4">
-            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-emerald-400 font-mono tabular-nums">
+            <span className="text-2xl sm:text-3xl font-semibold tracking-tight text-organic-text font-mono tabular-nums">
               {fundedSeparation !== null ? `${fundedSeparation.toFixed(0)}×` : 'n/a'}
             </span>
-            <span className="text-xs font-mono text-emerald-300/80 uppercase tracking-wider mt-1">
+            <span className="text-xs font-mono text-organic-text/80 uppercase tracking-wider mt-1">
               Funded Separation
             </span>
-            <span className="text-xs text-emerald-300 mt-0.5">
+            <span className="text-xs text-organic-text mt-0.5">
               {singleOpFundedPct !== null && organicFundedPct !== null
                 ? `${singleOpFundedPct.toFixed(2)}% vs ${organicFundedPct.toFixed(2)}% funded`
                 : 'Funded ratio unavailable'}

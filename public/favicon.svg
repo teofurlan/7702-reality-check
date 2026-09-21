@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="7702 Reality Check">
+  <title>7702 Reality Check</title>
+  <!--
+    The octahedron the page already uses as its mark, split down its own axis
+    into the two poles of the behavioural scale: Automation Amber on the left,
+    Organic Emerald on the right, matching the side each tier sits on in the
+    bimodal chart and in the page atmosphere.
+
+    Drawn for 16px first. The waist gap is deliberately wider than the page's
+    320px version and the halves are solid rather than wireframe: a stroked
+    outline and dashed vectors turn to mush at favicon scale, and the gap is a
+    shape cue that survives even when the two hues no longer resolve.
+  -->
+  <polygon points="16,2 5,16.5 16,21.5" fill="#fbbf24"/>
+  <polygon points="16,2 27,16.5 16,21.5" fill="#34d399"/>
+  <polygon points="16,24 5,18 16,30" fill="#fbbf24" fill-opacity="0.78"/>
+  <polygon points="16,24 27,18 16,30" fill="#34d399" fill-opacity="0.78"/>
+  <!-- Fold line along the recovery axis, dark so it reads on a light or dark tab. -->
+  <line x1="16" y1="2" x2="16" y2="21.5" stroke="#030308" stroke-width="1.1"/>
+  <line x1="16" y1="24" x2="16" y2="30" stroke="#030308" stroke-width="1.1"/>
+</svg>

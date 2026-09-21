@@ -1,8 +1,86 @@
 @import 'tailwindcss';
 
+/* ====================================================================
+   Self-hosted type.
+
+   Inter and JetBrains Mono were declared in the tokens below for months
+   and never actually loaded — no <link>, no @font-face — so the page
+   rendered in whatever sans the operating system happened to supply
+   (Segoe UI on Windows, Helvetica on macOS). A platform face standing in
+   as the display voice of an own-world page is a failure, not a fallback.
+
+   Self-hosted rather than fetched from Google's CDN on purpose: this
+   project's claim is that it needs no third-party service to work, and a
+   runtime request to fonts.gstatic.com to render its own lettering would
+   undercut that for no benefit. Vite fingerprints and bundles these two
+   files from node_modules; nothing is fetched at runtime from anywhere.
+
+   Latin subset only — 48 KB + 40 KB for the complete 100-900 weight axis
+   of both faces. The full package ships seven subsets each (cyrillic,
+   greek, vietnamese, latin-ext); every one of them would be bundled into
+   dist and never requested by this English-only page.
+
+   The latin subsets genuinely lack U+2264, U+2265, U+2192 and U+2197
+   (verified against the woff2 cmaps — Google Fonts drops them in
+   subsetting, so widening unicode-range would not help). Rather than
+   carry a second face for four codepoints, the interface no longer uses
+   them: ranges are written with an en dash or a plus, and the one arrow
+   that stood in for an icon is now a drawn icon.
+   ==================================================================== */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url('@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2')
+    format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+/* The claim voice, and nothing else on the page.
+   Inter is the correct workhorse for dense tabular data — it was designed for
+   it — but as the display face it is also the face every generated dashboard
+   converges on, so the one sentence the whole project stands behind read as
+   generic. A high-contrast editorial serif sets the claim in a different
+   register from the evidence beneath it: the page argues in a publication
+   voice and reports in an instrument voice, which is the whole conceit.
+
+   Gloock rather than the more common editorial serifs: it carries newspaper
+   masthead weight, which reads as "published claim, on the record" instead of
+   merely refined, and its numerals are lining, so 7702 keeps the precision the
+   rest of the page is built on. One weight is all a display face needs. */
+@font-face {
+  font-family: 'Gloock';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('@fontsource/gloock/files/gloock-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
 @theme {
-  /* Linear-inspired color tokens */
-  --color-canvas: #010102;
+  /* Canvas carries a faint violet cast rather than near-pure black. Pure
+     #010102 gave the page no floor: every section below the hero sat on void,
+     which is what made long scrolls read as bare. The atmosphere layers in
+     AmbientBackground supply the depth; this only stops the base from being
+     an absence. */
+  --color-canvas: #030308;
   --color-surface-1: #0f1011;
   --color-surface-2: #141516;
   --color-surface-3: #18191a;
@@ -23,6 +101,38 @@
   --color-danger: #e5484d;
   --color-warning: #f5a623;
 
+  /* ------------------------------------------------------------------
+     Behavioural axis: the one two-pole scale this whole page argues.
+
+     The measurement separates automation from accounts that hold real
+     money. That is ONE axis with two ends, so it gets exactly two hues,
+     and no data category is allowed to borrow a third.
+
+     `automation` deliberately is NOT red. src/signals/labels.mjs states
+     that a single-relayer, zero-funded contract is "operated by a single
+     actor — that is all the evidence supports", and containsForbiddenField
+     exists so no risk/score/threat field can smuggle intent back in.
+     Painting 24 single-operator contracts red smuggles the same claim
+     visually. Amber reads as "flagged by the instrument", not "guilty".
+
+     `evidence` is the one red on the page, reserved for the single
+     archetype with independently published attribution. It appears once.
+     ------------------------------------------------------------------ */
+  --color-automation: #f5a623;
+  --color-automation-text: #fbbf24;
+  --color-automation-dim: #7c5a12;
+  --color-organic: #10b981;
+  --color-organic-text: #34d399;
+  --color-organic-dim: #0b5c42;
+  --color-evidence: #e5484d;
+  --color-evidence-text: #f87171;
+
+  /* Volume is the reported vanity metric. It is the largest number on the
+     page and the least meaningful one, so it reads as inert mass — a cool
+     neutral, never an accent competing with the axis above. */
+  --color-volume: #6b7280;
+  --color-volume-text: #9ba3af;
+
   /* Spacing */
   --spacing-section: 96px;
 
@@ -32,10 +142,16 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
 
-  /* Fonts - using system stack as Linear fonts are proprietary */
-  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  /* Self-hosted variable faces (see the @font-face block above). The
+     system stack stays behind them as a genuine fallback for the first
+     paint and for the few codepoints outside the latin subset. */
+  --font-display: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Fira Code', monospace;
+  /* Reserved for the one claim the page is built to make. Deliberately a
+     separate token from --font-display, which is still Inter and still used on
+     small semibold labels where a serif would be wrong. */
+  --font-claim: 'Gloock', Georgia, 'Times New Roman', serif;
 }
 
 @layer base {
@@ -47,6 +163,125 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+}
+
+/* ====================================================================
+   Scroll-bound atmosphere
+
+   `--doc-progress` is 0 at the top of the document and 1 at the bottom.
+   AmbientBackground writes it straight onto the document element from a
+   rAF-throttled scroll handler, so the whole atmosphere is driven without
+   a single React re-render per frame — the incumbent handler called
+   setState on every frame, which re-rendered a ~500-line component
+   containing a 320x320 SVG for the entire duration of every scroll.
+
+   Registering it with @property is what makes `opacity: var(--doc-progress)`
+   and `scaleY(var(--doc-progress))` legal and interpolable. Where @property
+   is unsupported the initial-value 0 still parses, so the field degrades to
+   its resting state instead of breaking.
+   ==================================================================== */
+@property --doc-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Feed-driven breath: lifted for ~450ms when a delegation is recovered
+   live, so the page's ambient light answers to real chain data rather than
+   to a timer. */
+@property --feed-breath {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* The hero prism's eased migration, 0 at rest to 1 fully docked. */
+@property --hero-eased {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* The prism's rendered scale. Initial value 1 matters: before the scroll
+   writer's first pass the mark must render full size, never collapsed. */
+@property --prism-scale {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+:root {
+  --doc-progress: 0;
+  --feed-breath: 0;
+  --hero-eased: 0;
+  --prism-scale: 1;
+}
+
+/* The page argues from volume toward money, so the atmosphere travels the
+   same way: the automation pole carries the early scroll and hands off to
+   the organic pole. These are the two weights that crossfade, clamped so
+   neither end ever fully extinguishes. */
+.atmos-automation {
+  opacity: calc(0.42 - var(--doc-progress) * 0.30 + var(--feed-breath) * 0.10);
+}
+
+.atmos-organic {
+  opacity: calc(0.06 + var(--doc-progress) * 0.34 + var(--feed-breath) * 0.12);
+}
+
+.atmos-core {
+  opacity: calc(0.30 + var(--feed-breath) * 0.18);
+}
+
+/* Reading-position rail. scaleY on a composited layer, never height, so
+   the rail costs nothing per frame. */
+.axis-rail-lit {
+  transform: scaleY(var(--doc-progress));
+  transform-origin: top center;
+}
+
+@keyframes atmos-drift-slow {
+  0%,
+  100% {
+    transform: translate3d(-4%, 0, 0) scale(1.05);
+  }
+  50% {
+    transform: translate3d(6%, -3%, 0) scale(1.22);
+  }
+}
+
+@keyframes atmos-drift-counter {
+  0%,
+  100% {
+    transform: translate3d(5%, 2%, 0) scale(1.18);
+  }
+  50% {
+    transform: translate3d(-5%, -2%, 0) scale(1);
+  }
+}
+
+@keyframes atmos-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.85;
+  }
+}
+
+.animate-atmos-slow {
+  animation: atmos-drift-slow 34s ease-in-out infinite;
+}
+
+.animate-atmos-counter {
+  animation: atmos-drift-counter 46s ease-in-out infinite;
+}
+
+.animate-atmos-breathe {
+  animation: atmos-breathe 19s ease-in-out infinite;
 }
 
 @keyframes aurora-drift-1 {
@@ -150,9 +385,29 @@
   .animate-aurora-2,
   .animate-float-prism,
   .animate-spin-slow,
+  .animate-atmos-slow,
+  .animate-atmos-counter,
+  .animate-atmos-breathe,
   .animate-pulse,
   .animate-ping {
     animation: none !important;
+  }
+
+  /* Reduced motion drops the drift, not the atmosphere. The scroll-bound
+     crossfade and the feed breath are colour and opacity, not spatial
+     movement, so they stay: they are the meaning, and the page would lose
+     its reading of the axis if they were switched off with the drift. */
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Smooth anchor travel, so the hero's jump into the archetypes reads as
+   movement through one argument rather than a cut. Overridden above under
+   reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import {
   contractsByLabel,
   classifiedContracts,
@@ -91,6 +92,12 @@ export function BimodalChart({ data }: BimodalChartProps) {
 
   // Column widths follow the actual group sizes for this run, rather than
   // the fixed 13/3/10 split baked in for a previous dataset's counts.
+  //
+  // These fr values are the contract counts, so the bands render at their true
+  // proportions and must not be padded to make a label fit. A grid `1fr` is
+  // `minmax(auto, 1fr)`: a column cannot shrink below its content's min-content
+  // width, which means any long word placed in the narrow middle band silently
+  // widens that band in the chart. Keep the mixed-zone labels to short tokens.
   const columnTemplate = `${Math.max(singleOperatorContracts.length, MIN_COLUMN_FR)}fr ${Math.max(mixedContracts.length, MIN_COLUMN_FR)}fr ${Math.max(organicContracts.length, MIN_COLUMN_FR)}fr`;
 
   // Scaling limits for chart rendering (log scale for authorizations due to wide spread across contracts)
@@ -103,17 +110,42 @@ export function BimodalChart({ data }: BimodalChartProps) {
     setTimeout(() => setCopiedAddr(null), 2000);
   };
 
+  // Colour encodes the behavioural axis and nothing else: automation amber at
+  // one end, organic emerald at the other. The subtype is carried by the name,
+  // not by a fourth and fifth hue — the previous rose/purple/amber split spent
+  // three hues on one side of a two-pole scale.
+  //
+  // `evidence` red appears exactly once on this page, on the single contract
+  // with independently published attribution. Every other automated contract
+  // stays amber, because src/signals/labels.mjs asserts operation by a single
+  // actor and deliberately refuses to assert intent.
   const getArchetype = (c: ContractData) => {
     if (c.addr.toLowerCase() === '0xe6b97aa1490c93c28a14d86c13c9dc9c950643ed') {
-      return { name: 'Address Poisoner', tag: 'Poisoner', color: 'text-amber-400 border-amber-500/20 bg-amber-500/10' };
+      return {
+        name: 'Address Poisoner',
+        tag: 'Poisoner',
+        color: 'text-evidence-text border-evidence/25 bg-evidence/10',
+      };
     }
     if (c.relayers === 1 && c.funded === 0 && c.medNonce === 0) {
-      return { name: 'Fresh-Address Farm', tag: 'Farm', color: 'text-rose-400 border-rose-500/20 bg-rose-500/10' };
+      return {
+        name: 'Fresh-Address Farm',
+        tag: 'Farm',
+        color: 'text-automation-text border-automation/25 bg-automation/10',
+      };
     }
     if (c.label === 'single-operator') {
-      return { name: 'Single-Operator Bot', tag: 'Automated', color: 'text-purple-400 border-purple-500/20 bg-purple-500/10' };
+      return {
+        name: 'Single-Operator Bot',
+        tag: 'Automated',
+        color: 'text-automation-text border-automation/25 bg-automation/10',
+      };
     }
-    return { name: 'Organic Infrastructure', tag: 'Organic', color: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10' };
+    return {
+      name: 'Organic Infrastructure',
+      tag: 'Organic',
+      color: 'text-organic-text border-organic/25 bg-organic/10',
+    };
   };
 
   // Text description of a column for screen readers, mirroring exactly what
@@ -131,7 +163,13 @@ export function BimodalChart({ data }: BimodalChartProps) {
   // classification is never conveyed by color alone at this layer (relayer
   // zone banners above already say it in text; this carries it down to the
   // individual bar).
-  const renderBars = (contracts: ContractData[], accentHover: string, accentBase: string, topShape: string) =>
+  const renderBars = (
+    contracts: ContractData[],
+    accentHover: string,
+    metricBase: string,
+    metricHover: string,
+    topShape: string,
+  ) =>
     contracts.map((c) => {
       const fundedRatio = c.funded !== null && c.sampled > 0 ? (c.funded / c.sampled) * 100 : 0;
 
@@ -159,19 +197,29 @@ export function BimodalChart({ data }: BimodalChartProps) {
             isHovered ? `bg-surface-3 ring-1 ${accentHover}` : 'hover:bg-surface-2'
           }`}
         >
-          {/* Auth Bar */}
+          {/* Volume bar. Deliberately inert: this is the reported vanity
+              metric, and it used to carry the page's most attractive accent
+              while the figure it represents is the one the project exists to
+              debunk. Neutral mass reads as "large and meaningless", which is
+              exactly the claim. */}
           <div
             style={{ height: `${authHeight}%` }}
-            className={`w-2 sm:w-2.5 rounded-t-sm transition-all duration-300 ${
-              isHovered ? 'bg-primary-hover shadow-lg shadow-primary/20' : 'bg-primary/80'
+            className={`w-2 rounded-t-sm transition-all duration-300 sm:w-2.5 ${
+              isHovered ? 'bg-volume-text' : 'bg-volume/55'
             }`}
           />
-          {/* Metric Bar — top shape (square/pill/flat) varies by zone so
-              classification survives in grayscale, not just via color. */}
+          {/* Money bar, coloured by tier rather than always emerald. The old
+              version painted a single-operator bot's ETH the same green as the
+              "these are real users" signal, so the asymmetry the chart exists
+              to show was flattened. Now the two ends of the axis are two
+              masses of colour and the comparison is immediate.
+
+              Top shape (square/pill/flat) still varies by zone, so the
+              classification also survives in grayscale. */}
           <div
             style={{ height: `${valHeight}%` }}
             className={`w-2 sm:w-2.5 ${topShape} transition-all duration-300 ${
-              isHovered ? accentBase : 'bg-emerald-500/70'
+              isHovered ? metricHover : metricBase
             }`}
           />
         </div>
@@ -183,7 +231,7 @@ export function BimodalChart({ data }: BimodalChartProps) {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-16">
-      <div className="rounded-xl border border-hairline bg-surface-1 p-6 sm:p-8 shadow-2xl transition-all">
+      <div className="rounded-xl border border-hairline bg-surface-1/75 p-6 backdrop-blur-xl transition-all sm:p-8">
         {/* Section Heading & Controls */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between border-b border-hairline pb-6">
           <div className="max-w-2xl">
@@ -193,12 +241,12 @@ export function BimodalChart({ data }: BimodalChartProps) {
             <p className="mt-2 text-sm sm:text-base text-ink-subtle font-body leading-relaxed">
               Distribution of the {sortedContracts.length} classified contracts accounting for{' '}
               {formatPct(stats.classifiedVolumePct)} of all volume. {singleOperatorContracts.length} single-operator
-              contracts (≤5 relayers) hold {formatPct(stats.singleOpVolumePct)} of volume with{' '}
+              contracts (1–5 relayers) hold {formatPct(stats.singleOpVolumePct)} of volume with{' '}
               {formatPct(stats.singleOpFundedPct)} funded wallets,{' '}
               {mixedContracts.length === 0
                 ? 'an empty gap between 6–14 relayers'
                 : `${mixedContracts.length} contract${mixedContracts.length === 1 ? '' : 's'} in the 6–14 relayer gap`}
-              , and {formatPct(stats.organicEthSharePct)} of real ETH concentrated in the organic tier (≥15 relayers).
+              , and {formatPct(stats.organicEthSharePct)} of real ETH concentrated in the organic tier (15+ relayers).
             </p>
           </div>
 
@@ -239,9 +287,9 @@ export function BimodalChart({ data }: BimodalChartProps) {
             <div className="flex items-center gap-2">
               <span className="font-mono text-ink-subtle uppercase tracking-wider">Measured Block Window:</span>
               <span className="font-mono text-ink font-medium">
-                #{data.fromBlock.toLocaleString()} → #{data.toBlock.toLocaleString()}
+                #{data.fromBlock.toLocaleString()} – #{data.toBlock.toLocaleString()}
               </span>
-              <span className="rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 font-mono text-xs text-primary-text">
+              <span className="whitespace-nowrap rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 font-mono text-xs text-primary-text">
                 {(data.toBlock - data.fromBlock).toLocaleString()} blocks
               </span>
             </div>
@@ -255,40 +303,73 @@ export function BimodalChart({ data }: BimodalChartProps) {
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-sm bg-primary" />
+              <span className="h-3 w-3 rounded-sm bg-volume/55" />
               <span className="text-ink">Authorizations (Volume)</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="h-3 w-3 rounded-sm bg-emerald-500" />
+              <span className="flex items-center">
+                <span className="h-3 w-1.5 rounded-l-sm bg-automation/60" />
+                <span className="h-3 w-1.5 rounded-r-sm bg-organic/70" />
+              </span>
               <span className="text-ink">
                 {metricMode === 'eth' ? 'ETH Balance' : 'Funded Wallet Ratio (%)'}
+                <span className="ml-1.5 text-ink-tertiary">by tier</span>
               </span>
             </div>
           </div>
           <div className="text-ink-tertiary text-xs">
-            Hover column for details • Log-normalized volume bars
+            <span className="sm:hidden">Swipe sideways • tap a column for details</span>
+            <span className="hidden sm:inline">
+              Hover column for details • Log-normalized volume bars
+            </span>
           </div>
         </div>
 
-        {/* Chart Canvas */}
-        <div className="relative mt-6 overflow-x-auto pb-4">
-          <div className="min-w-[760px]">
+        {/* Chart Canvas. The 760px floor is deliberate — see DESIGN.md — so on
+            a phone this scrolls sideways, and the gradient below is what says
+            so. */}
+        <div className="relative">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute top-0 right-0 bottom-4 z-10 w-12 bg-gradient-to-l from-surface-1 to-transparent sm:hidden"
+          />
+          <div className="relative mt-6 overflow-x-auto pb-4">
+            <div className="min-w-[760px]">
             {/* Zones Banner */}
             <div className="grid gap-2 mb-3 text-xs font-mono" style={{ gridTemplateColumns: columnTemplate }}>
-              <div className="rounded border border-primary/20 bg-primary/5 py-1.5 px-3 text-left">
-                <span className="text-primary-text font-semibold">Single-Operator Zone (≤5 Relayers)</span>
+              <div className="rounded border border-automation/20 bg-automation/5 py-1.5 px-3 text-left">
+                <span className="text-automation-text font-semibold">Single-Operator Zone (1–5 relayers)</span>
                 <span className="text-ink-tertiary ml-2">
                   {singleOperatorContracts.length} Contracts • {formatPct(stats.singleOpVolumePct)} Vol • {formatEth(stats.singleOpEth)}
                 </span>
               </div>
-              <div className="rounded border border-dashed border-hairline-strong bg-surface-2/40 py-1.5 px-2 text-center text-ink-tertiary">
-                <span>Mixed-Relayers Zone (6–14 Relayers)</span>
-                <div className="text-xs text-amber-500/80 font-medium">
-                  {mixedContracts.length} Contract{mixedContracts.length === 1 ? '' : 's'}
-                </div>
+              {/* Deliberately two short tokens. See the note on
+                  `columnTemplate`: a long label here cannot wrap below its own
+                  min-content width, so it was holding this band far wider than
+                  its share of the classified set. The full wording lives in
+                  `title` and the screen-reader span, the range is repeated on
+                  the axis below, and the prose above the chart states it in a
+                  sentence. */}
+              <div
+                title={`Mixed-relayers zone, 6–14 relayers: ${mixedContracts.length} contract${
+                  mixedContracts.length === 1 ? '' : 's'
+                }, ${formatPct(stats.mixedVolumePct)} of volume`}
+                className="flex flex-col items-center justify-center rounded border border-dashed border-hairline-strong bg-surface-2/40 px-1 py-1.5 text-center text-ink-tertiary"
+              >
+                <span className="sr-only">
+                  Mixed-relayers zone, 6 to 14 relayers: {mixedContracts.length} contract
+                  {mixedContracts.length === 1 ? '' : 's'}, {formatPct(stats.mixedVolumePct)} of
+                  volume
+                </span>
+                <span aria-hidden="true" className="whitespace-nowrap">
+                  6–14
+                </span>
+                <span aria-hidden="true" className="font-medium text-volume-text">
+                  {mixedContracts.length}
+                </span>
               </div>
-              <div className="rounded border border-emerald-500/20 bg-emerald-500/5 py-1.5 px-3 text-right">
-                <span className="text-emerald-400 font-semibold">Organic Tier (≥15 Relayers)</span>
+              <div className="rounded border border-organic/20 bg-organic/5 py-1.5 px-3 text-right">
+                <span className="text-organic-text font-semibold">Organic Tier (15+ relayers)</span>
                 <span className="text-ink-tertiary ml-2">
                   {organicContracts.length} Contracts • {formatPct(stats.organicVolumePct)} Vol • {formatEth(stats.organicEth)}
                 </span>
@@ -309,7 +390,13 @@ export function BimodalChart({ data }: BimodalChartProps) {
               <div className="relative z-10 grid gap-2 w-full h-full items-end" style={{ gridTemplateColumns: columnTemplate }}>
                 {/* Single-Operator Bars */}
                 <div className="grid gap-1.5 h-full items-end" style={{ gridTemplateColumns: `repeat(${Math.max(singleOperatorContracts.length, 1)}, minmax(0, 1fr))` }}>
-                  {renderBars(singleOperatorContracts, 'ring-primary/40', 'bg-emerald-400', 'rounded-t-sm')}
+                  {renderBars(
+                    singleOperatorContracts,
+                    'ring-automation/40',
+                    'bg-automation/60',
+                    'bg-automation-text',
+                    'rounded-t-sm',
+                  )}
                 </div>
 
                 {/* Mixed-Relayers Zone (6–14 Relayers) — rendered with real
@@ -317,22 +404,40 @@ export function BimodalChart({ data }: BimodalChartProps) {
                     hardcoded "always empty" placeholder. */}
                 {mixedContracts.length > 0 ? (
                   <div className="grid gap-1.5 h-full items-end border-x border-dashed border-hairline px-1" style={{ gridTemplateColumns: `repeat(${mixedContracts.length}, minmax(0, 1fr))` }}>
-                    {renderBars(mixedContracts, 'ring-amber-400/40', 'bg-amber-400', 'rounded-t-full')}
+                    {renderBars(
+                      mixedContracts,
+                      'ring-volume-text/40',
+                      'bg-volume/70',
+                      'bg-volume-text',
+                      'rounded-t-full',
+                    )}
                   </div>
                 ) : (
-                  <div className="relative h-full flex flex-col items-center justify-center border-x border-dashed border-hairline bg-canvas/40 px-2 py-4">
-                    <div className="text-center">
-                      <span className="font-mono text-xs font-semibold text-amber-400/90 block">GAP (0)</span>
-                      <span className="text-xs text-ink-tertiary block mt-1 leading-tight">
-                        No contracts with 6–14 relayers
-                      </span>
-                    </div>
+                  <div
+                    title="No contracts with 6–14 relayers in the measured window"
+                    className="relative flex h-full flex-col items-center justify-center border-x border-dashed border-hairline bg-canvas/40 px-1 py-4"
+                  >
+                    <span className="sr-only">
+                      No contracts with 6 to 14 relayers in the measured window
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="block font-mono text-xs font-semibold text-volume-text"
+                    >
+                      0
+                    </span>
                   </div>
                 )}
 
                 {/* Organic Bars */}
                 <div className="grid gap-1.5 h-full items-end" style={{ gridTemplateColumns: `repeat(${Math.max(organicContracts.length, 1)}, minmax(0, 1fr))` }}>
-                  {renderBars(organicContracts, 'ring-emerald-500/40', 'bg-emerald-400', 'rounded-t-none')}
+                  {renderBars(
+                    organicContracts,
+                    'ring-organic/40',
+                    'bg-organic/70',
+                    'bg-organic-text',
+                    'rounded-t-none',
+                  )}
                 </div>
               </div>
             </div>
@@ -344,7 +449,7 @@ export function BimodalChart({ data }: BimodalChartProps) {
                 <span>5 Relayers</span>
               </div>
               <div className="text-center text-ink-tertiary">
-                <span>6 — 14</span>
+                <span className="whitespace-nowrap">6–14</span>
               </div>
               <div className="flex justify-between px-1">
                 <span>15 Relayers</span>
@@ -352,6 +457,7 @@ export function BimodalChart({ data }: BimodalChartProps) {
                   {organicContracts.length > 0 ? Math.max(...organicContracts.map((c) => c.relayers)) : '—'} Relayers
                 </span>
               </div>
+            </div>
             </div>
           </div>
         </div>
@@ -375,9 +481,10 @@ export function BimodalChart({ data }: BimodalChartProps) {
                   href={`https://etherscan.io/address/${hoveredContract.addr}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-mono text-primary-text hover:underline"
+                  className="group inline-flex items-center gap-1 text-xs font-mono text-primary-text hover:underline"
                 >
-                  Etherscan ↗
+                  Etherscan
+                  <ArrowUpRight className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
               </div>
 
@@ -407,7 +514,7 @@ export function BimodalChart({ data }: BimodalChartProps) {
               </div>
               <div className="rounded border border-hairline/60 bg-surface-3/50 p-2.5">
                 <span className="text-ink-tertiary text-xs block uppercase">Verified ETH</span>
-                <span className="text-emerald-400 font-semibold text-sm mt-0.5 block">
+                <span className="text-organic-text font-semibold text-sm mt-0.5 block">
                   {hoveredContract.totalEth.toFixed(4)} ETH
                 </span>
               </div>

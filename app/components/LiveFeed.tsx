@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, Radio, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Play, Pause, Radio, ExternalLink, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useLiveFeed, type LiveFeedState, type LiveDetection } from '../hooks/useLiveFeed';
 export type { LiveDetection };
 
@@ -21,24 +21,24 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
   } = feed;
 
   return (
-    <section className="border-b border-hairline bg-surface-1/25 backdrop-blur-sm">
+    <section className="relative border-b border-hairline bg-surface-1/35 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 py-5">
         {/* Header & Status Bar */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
           <div className="flex items-center gap-3">
             <span className="relative flex h-2.5 w-2.5">
               {isPolling && (
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-organic-text opacity-75" />
               )}
               <span
                 className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                  isPolling ? 'bg-emerald-500' : 'bg-ink-tertiary'
+                  isPolling ? 'bg-organic' : 'bg-ink-tertiary'
                 }`}
               />
             </span>
 
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <span className="text-sm font-semibold text-ink font-display">
                   Live Mainnet Ingestion Stream
                 </span>
@@ -52,20 +52,20 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="flex items-center gap-2 font-mono text-xs">
+          <div className="flex flex-wrap items-center gap-2 self-start sm:gap-3 sm:self-auto">
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
               <span className="rounded border border-hairline bg-surface-2 px-2.5 py-1 text-ink-muted">
                 Block: <span className="text-ink font-medium">{latestBlock ? `#${latestBlock.toLocaleString()}` : 'Connecting...'}</span>
               </span>
               <span className="rounded border border-hairline bg-surface-2 px-2.5 py-1 text-ink-muted">
-                Live Detections: <span className="text-emerald-400 font-medium">{detections.length}</span>
+                Detections: <span className="text-organic-text font-medium">{detections.length}</span>
               </span>
               <span
                 className="rounded border border-hairline bg-surface-2 px-2.5 py-1 text-ink-muted"
                 title="Authorization tuples whose signature failed ECDSA recovery this session — counted, never silently dropped"
               >
                 Recovery Failures:{' '}
-                <span className={sessionRecoveryFailures > 0 ? 'text-amber-400 font-medium' : 'text-ink-muted font-medium'}>
+                <span className={sessionRecoveryFailures > 0 ? 'text-automation-text font-medium' : 'text-ink-muted font-medium'}>
                   {sessionRecoveryFailures}
                 </span>
               </span>
@@ -78,9 +78,9 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
               title={isPolling ? 'Pause live polling' : 'Resume live polling'}
             >
               {isPolling ? (
-                <Pause className="h-3 w-3 text-amber-400" />
+                <Pause className="h-3 w-3 text-automation-text" />
               ) : (
-                <Play className="h-3 w-3 text-emerald-400" />
+                <Play className="h-3 w-3 text-organic-text" />
               )}
               <span>{isPolling ? 'Pause' : 'Resume'}</span>
             </button>
@@ -91,7 +91,7 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
             not red — this is an expected condition of a free public
             endpoint, not an alarm, and it retries automatically. */}
         {lastError && (
-          <div className="mb-3 flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-2.5 font-mono text-xs text-amber-300">
+          <div className="mb-3 flex items-center gap-2.5 rounded-lg border border-automation/25 bg-automation/10 px-4 py-2.5 font-mono text-xs text-automation-text">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
             <span>Public RPC request failed ({lastError}). Retrying automatically every 12s.</span>
           </div>
@@ -124,10 +124,13 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
                     </span>
                     <span className="text-ink-tertiary">•</span>
                     <span className="text-ink-tertiary">Signer (Authority):</span>
-                    <span className="font-semibold text-emerald-400">
+                    <span className="font-semibold text-organic-text">
                       {d.authority.slice(0, 8)}...{d.authority.slice(-6)}
                     </span>
-                    <span className="text-ink-tertiary">→ Target:</span>
+                    <span className="inline-flex items-center gap-1.5 text-ink-tertiary">
+                      <ArrowRight className="h-3 w-3" />
+                      Target:
+                    </span>
                     <span className="text-ink">
                       {d.delegate.slice(0, 8)}...{d.delegate.slice(-6)}
                     </span>
@@ -135,7 +138,7 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
 
                   <div className="flex items-center gap-3 shrink-0">
                     {isSponsored ? (
-                      <span className="rounded bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-xs text-amber-400 font-medium">
+                      <span className="rounded bg-automation/10 border border-automation/25 px-2 py-0.5 text-xs text-automation-text font-medium">
                         Sponsored (Relayer: {d.sender.slice(0, 6)}...{d.sender.slice(-4)})
                       </span>
                     ) : (

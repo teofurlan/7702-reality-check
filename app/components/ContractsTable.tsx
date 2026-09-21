@@ -36,19 +36,25 @@ const STATUS_BY_LABEL: Record<string, { label: string; badgeClass: string; isCla
     badgeClass: 'bg-surface-3 text-ink-subtle border-hairline',
     isClassified: false,
   },
+  // Amber, never red. labels.mjs states this label means "operated by a
+  // single actor - that is all the evidence supports", and containsForbiddenField
+  // exists so no risk/score/threat field can reintroduce a verdict. A red row
+  // reintroduces the same verdict visually, 24 times over.
   'single-operator': {
     label: 'Single-operator',
-    badgeClass: 'bg-red-950/40 text-red-400 border-red-800/40',
+    badgeClass: 'bg-automation/10 text-automation-text border-automation/25',
     isClassified: true,
   },
   organic: {
     label: 'Organic',
-    badgeClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40',
+    badgeClass: 'bg-organic/10 text-organic-text border-organic/25',
     isClassified: true,
   },
+  // The 6-14 band is a real bucket contracts land in, not a verdict and not a
+  // placeholder: neutral, sitting between the two poles.
   'mixed-relayers': {
     label: 'Mixed-relayers',
-    badgeClass: 'bg-amber-950/40 text-amber-400 border-amber-800/40',
+    badgeClass: 'bg-volume/10 text-volume-text border-volume/25',
     isClassified: true,
   },
 };
@@ -152,7 +158,7 @@ export function ContractsTable({ data }: ContractsTableProps) {
             </h2>
           </div>
           <p className="text-ink-subtle max-w-2xl text-sm leading-relaxed">
-            Contracts with <span className="text-ink font-medium">≥{MIN_AUTHORIZATIONS} authorizations</span> represent{' '}
+            Contracts with <span className="text-ink font-medium">{MIN_AUTHORIZATIONS}+ authorizations</span> represent{' '}
             <span className="text-primary-text font-mono font-medium">
               {classifiedVolumePct !== null ? `${classifiedVolumePct.toFixed(2)}%` : 'n/a'}
             </span>{' '}
@@ -180,12 +186,12 @@ export function ContractsTable({ data }: ContractsTableProps) {
           onClick={() => handleTabChange('single-operator')}
           className={`px-3 py-1.5 text-xs font-mono transition-all rounded-md flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'single-operator'
-              ? 'bg-red-950/40 text-red-300 font-semibold border border-red-800/40 shadow-sm'
+              ? 'bg-automation/12 text-automation-text font-semibold border border-automation/30 shadow-sm'
               : 'text-ink-subtle hover:text-ink hover:bg-surface-3/50'
           }`}
         >
           Single-Operator
-          <span className="px-1.5 py-0.5 rounded-full text-xs bg-red-950/60 text-red-400 border border-red-900/30">
+          <span className="px-1.5 py-0.5 rounded-full text-xs bg-automation/15 text-automation-text border border-automation/25">
             {tabCounts['single-operator']}
           </span>
         </button>
@@ -194,12 +200,12 @@ export function ContractsTable({ data }: ContractsTableProps) {
           onClick={() => handleTabChange('organic')}
           className={`px-3 py-1.5 text-xs font-mono transition-all rounded-md flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'organic'
-              ? 'bg-emerald-950/40 text-emerald-300 font-semibold border border-emerald-800/40 shadow-sm'
+              ? 'bg-organic/12 text-organic-text font-semibold border border-organic/30 shadow-sm'
               : 'text-ink-subtle hover:text-ink hover:bg-surface-3/50'
           }`}
         >
           Organic
-          <span className="px-1.5 py-0.5 rounded-full text-xs bg-emerald-950/60 text-emerald-400 border border-emerald-900/30">
+          <span className="px-1.5 py-0.5 rounded-full text-xs bg-organic/15 text-organic-text border border-organic/25">
             {tabCounts.organic}
           </span>
         </button>
@@ -234,7 +240,12 @@ export function ContractsTable({ data }: ContractsTableProps) {
       </div>
 
       {/* Table container */}
-      <div className="overflow-x-auto border border-hairline rounded-lg bg-surface-1/30 shadow-2xl">
+      {/* Ten columns of measured signals; the table keeps its width and
+          scrolls rather than dropping columns, so the hint below says so. */}
+      <p className="mb-2 font-mono text-xs text-ink-tertiary sm:hidden">
+        Swipe the table sideways for every signal
+      </p>
+      <div className="overflow-x-auto rounded-lg border border-hairline bg-surface-1/40 backdrop-blur-xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-surface-1 text-ink-subtle font-mono text-xs uppercase tracking-wider border-b border-hairline">
@@ -274,7 +285,7 @@ export function ContractsTable({ data }: ContractsTableProps) {
                           aria-label="Copy address"
                           className="text-ink-tertiary hover:text-ink opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                          {isCopied ? <Check className="w-3.5 h-3.5 text-organic-text" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                         <a
                           href={`https://etherscan.io/address/${c.addr}`}
@@ -290,7 +301,7 @@ export function ContractsTable({ data }: ContractsTableProps) {
                     </td>
 
                     <td className="px-3 py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono border ${status.badgeClass}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-mono border whitespace-nowrap ${status.badgeClass}`}>
                         {status.label}
                       </span>
                     </td>
@@ -304,13 +315,21 @@ export function ContractsTable({ data }: ContractsTableProps) {
                     </td>
 
                     <td className="px-3 py-3 text-right text-ink tabular-nums">
-                      <span className={c.label === 'single-operator' ? 'text-red-400 font-medium' : c.label === 'organic' ? 'text-emerald-400 font-medium' : 'text-ink'}>
+                      <span
+                        className={
+                          c.label === 'single-operator'
+                            ? 'text-automation-text font-medium'
+                            : c.label === 'organic'
+                              ? 'text-organic-text font-medium'
+                              : 'text-ink'
+                        }
+                      >
                         {c.relayers}
                       </span>
                     </td>
 
                     <td className="px-3 py-3 text-right tabular-nums">
-                      <span className={c.redelegation > 2.0 ? 'text-amber-400 font-medium' : 'text-ink-muted'}>
+                      <span className={c.redelegation > 2.0 ? 'text-automation-text font-medium' : 'text-ink-muted'}>
                         {c.redelegation.toFixed(2)}×
                       </span>
                     </td>
@@ -322,7 +341,7 @@ export function ContractsTable({ data }: ContractsTableProps) {
                     <td className="px-3 py-3 text-right tabular-nums">
                       {c.funded !== null ? (
                         <>
-                          <span className={c.funded > 20 ? 'text-emerald-400 font-medium' : 'text-ink-subtle'}>
+                          <span className={c.funded > 20 ? 'text-organic-text font-medium' : 'text-ink-subtle'}>
                             {c.funded}
                           </span>
                           <span className="text-ink-tertiary">/{c.sampled}</span>
@@ -333,7 +352,7 @@ export function ContractsTable({ data }: ContractsTableProps) {
                     </td>
 
                     <td className="px-4 py-3 text-right tabular-nums">
-                      <span className={c.totalEth > 0.1 ? 'text-emerald-300 font-medium' : 'text-ink-tertiary'}>
+                      <span className={c.totalEth > 0.1 ? 'text-organic-text font-medium' : 'text-ink-tertiary'}>
                         {c.totalEth.toFixed(2)}
                       </span>
                     </td>
