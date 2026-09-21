@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, Radio, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Play, Pause, Radio, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useLiveFeed, type LiveFeedState, type LiveDetection } from '../hooks/useLiveFeed';
 export type { LiveDetection };
 
@@ -16,6 +16,7 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
     detections,
     sessionScannedCount,
     sessionRecoveryFailures,
+    lastError,
     togglePolling,
   } = feed;
 
@@ -41,7 +42,7 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
                 <span className="text-sm font-semibold text-ink font-display">
                   Live Mainnet Ingestion Stream
                 </span>
-                <span className="rounded border border-primary/20 bg-primary/10 px-2 py-0.5 font-mono text-xs text-primary font-medium">
+                <span className="rounded border border-primary/20 bg-primary/10 px-2 py-0.5 font-mono text-xs text-primary-text font-medium">
                   Web Worker · Off-Thread secp256k1
                 </span>
               </div>
@@ -86,18 +87,24 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
           </div>
         </div>
 
+        {/* Degraded state: the public RPC endpoint failed this poll. Amber,
+            not red — this is an expected condition of a free public
+            endpoint, not an alarm, and it retries automatically. */}
+        {lastError && (
+          <div className="mb-3 flex items-center gap-2.5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-2.5 font-mono text-xs text-amber-300">
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+            <span>Public RPC request failed ({lastError}). Retrying automatically every 12s.</span>
+          </div>
+        )}
+
         {/* Feed Content: Latest 5 Detections or Active Polling Indicator */}
         {detections.length === 0 ? (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-lg border border-dashed border-hairline/70 bg-surface-2/30 px-4 py-3.5 font-mono text-xs text-ink-subtle">
             <div className="flex items-center gap-2.5">
-              <Radio className="h-3.5 w-3.5 text-primary animate-pulse shrink-0" />
+              <Radio className="h-3.5 w-3.5 text-primary-text animate-pulse shrink-0" />
               <span>
                 Monitoring live blocks ({sessionScannedCount} blocks checked) · Awaiting next mainnet block with EIP-7702 transactions...
               </span>
-            </div>
-            <div className="flex items-center gap-1.5 text-ink-tertiary text-xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500/70" />
-              <span>Zero UI thread blocking</span>
             </div>
           </div>
         ) : (
@@ -141,7 +148,7 @@ export function LiveFeed({ feed: externalFeed }: LiveFeedProps) {
                       href={`https://etherscan.io/tx/${d.txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:text-primary-hover transition-colors"
+                      className="inline-flex items-center gap-1 text-primary-text hover:text-primary-hover transition-colors"
                     >
                       <span>Etherscan</span>
                       <ExternalLink className="h-3 w-3" />

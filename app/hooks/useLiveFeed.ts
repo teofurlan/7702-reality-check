@@ -19,6 +19,11 @@ export interface LiveFeedState {
   // this session, across every scanned block. Surfaced in the UI rather
   // than swallowed — see `feed.worker.ts`'s `LiveBlockEvent.recoveryFailures`.
   sessionRecoveryFailures: number;
+  // Message from the worker's most recent `ERROR` event (e.g. a throttled or
+  // unreachable public RPC), or `null` once a block has been scanned
+  // successfully again. Without this, an RPC failure leaves the UI stuck on
+  // "Connecting..." forever with no explanation — see `feed.worker.ts`.
+  lastError: string | null;
   togglePolling: () => void;
 }
 
@@ -31,6 +36,7 @@ export function useLiveFeed(): LiveFeedState {
   const [lastDetectionAt, setLastDetectionAt] = useState<number | null>(null);
   const [pulseTrigger, setPulseTrigger] = useState<number>(0);
   const [sessionRecoveryFailures, setSessionRecoveryFailures] = useState<number>(0);
+  const [lastError, setLastError] = useState<string | null>(null);
 
   const workerRef = useRef<Worker | null>(null);
   const isPollingRef = useRef<boolean>(true);
@@ -49,6 +55,15 @@ export function useLiveFeed(): LiveFeedState {
     worker.onmessage = (e: MessageEvent<LiveBlockEvent>) => {
       const event = e.data;
 
+      // An RPC failure (e.g. the public endpoint throttling) is surfaced
+      // rather than left to strand the UI on "Connecting..." forever. It
+      // does not count as a scanned block, so we return before touching
+      // `latestBlock`/`sessionScannedCount`.
+      if (event.type === 'ERROR') {
+        setLastError(event.error || 'RPC polling error');
+        return;
+      }
+
       if (event.blockNumber) {
         setLatestBlock(event.blockNumber);
         setSessionScannedCount((prev) => prev + 1);
@@ -56,6 +71,12 @@ export function useLiveFeed(): LiveFeedState {
 
       if (event.recoveryFailures) {
         setSessionRecoveryFailures((prev) => prev + event.recoveryFailures!);
+      }
+
+      // A successful block scan means the RPC is healthy again — clear any
+      // previously surfaced error.
+      if (event.type === 'BLOCK_SCANNED' || event.type === 'NEW_DELEGATIONS') {
+        setLastError(null);
       }
 
       // Filter: ONLY record events that actually contain recovered EIP-7702 delegations
@@ -111,6 +132,7 @@ export function useLiveFeed(): LiveFeedState {
     lastDetectionAt,
     pulseTrigger,
     sessionRecoveryFailures,
+    lastError,
     togglePolling,
   };
 }

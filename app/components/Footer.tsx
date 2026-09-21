@@ -4,7 +4,7 @@ export function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="text-ink-subtle text-sm">
           7702 Reality Check — Built for{' '}
-          <a href="https://3rd-web-hack.devpost.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-hover transition-colors">
+          <a href="https://3rd-web-hack.devpost.com/" target="_blank" rel="noopener noreferrer" className="text-primary-text hover:text-primary-hover transition-colors">
             3rd-Web-Hack
           </a>
         </div>

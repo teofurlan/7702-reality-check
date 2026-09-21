@@ -11,9 +11,13 @@
   --color-ink: #f7f8f8;
   --color-ink-muted: #d0d6e0;
   --color-ink-subtle: #8a8f98;
-  --color-ink-tertiary: #62666d;
+  --color-ink-tertiary: #7a7e88;
   --color-primary: #5e6ad2;
   --color-primary-hover: #828fff;
+  /* Text-only variant of --color-primary: 7.27:1 contrast on canvas.
+     --color-primary stays for fills, borders and backgrounds where it is a
+     UI element, not text — see app/components/*.tsx text-primary-text uses. */
+  --color-primary-text: #828fff;
   --color-on-primary: #ffffff;
   --color-success: #27a644;
   --color-danger: #e5484d;
@@ -137,13 +141,61 @@
   animation-play-state: paused !important;
 }
 
-/* prefers-reduced-motion: drop float/spin/aurora, keep gentle opacity-based pulse */
+/* prefers-reduced-motion: drop float/spin/aurora plus Tailwind's built-in
+   animate-pulse/animate-ping utilities, used across ~6 live-status
+   indicators. Custom detection-pulse keyframes are handled separately via
+   the animate-detection-reduced class swap in AmbientBackground.tsx. */
 @media (prefers-reduced-motion: reduce) {
   .animate-aurora-1,
   .animate-aurora-2,
   .animate-float-prism,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .animate-pulse,
+  .animate-ping {
     animation: none !important;
   }
+}
+
+/* Themed browser surfaces — selection, caret, scrollbar and focus ring all
+   read as designed rather than left at browser defaults. */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--color-primary-hover);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-hover);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+html {
+  scrollbar-color: var(--color-hairline-strong) var(--color-canvas);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-hairline-strong);
+  border-radius: 999px;
+  border: 2px solid var(--color-canvas);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ink-tertiary);
 }
 

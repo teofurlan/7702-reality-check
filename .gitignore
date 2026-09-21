@@ -9,3 +9,4 @@ dist/
 
 # agent tooling cache — session notes and a generated skill index, not project source
 .atl/
+.impeccable/

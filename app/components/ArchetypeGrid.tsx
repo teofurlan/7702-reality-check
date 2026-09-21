@@ -117,6 +117,7 @@ function SignalIndicator({
             onMouseEnter={() => setShowTooltip(true)}
             onMouseLeave={() => setShowTooltip(false)}
             onClick={() => setShowTooltip((s) => !s)}
+            aria-label={`Explain the ${label} signal`}
             className="text-ink-tertiary hover:text-ink transition-colors"
           >
             <Info className="w-3 h-3" />
@@ -172,7 +173,7 @@ function ArchetypeCard({
           rather than dropped: an absent card would overstate the coverage of
           this sample.
         </p>
-        <span className="font-mono text-xs text-ink-tertiary/70 break-all">
+        <span className="font-mono text-xs text-ink-tertiary break-all">
           {archetype.addr}
         </span>
       </div>
@@ -194,7 +195,7 @@ function ArchetypeCard({
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-surface-2 border border-hairline text-ink">
-              <Icon className="w-5 h-5 text-primary" />
+              <Icon className="w-5 h-5 text-primary-text" />
             </div>
             <div>
               <h3 className="text-xl font-semibold text-ink tracking-tight" style={{ letterSpacing: '-0.02em' }}>
@@ -221,6 +222,7 @@ function ArchetypeCard({
             <button
               onClick={copyAddr}
               title="Copy contract address"
+              aria-label="Copy contract address"
               className="text-ink-tertiary hover:text-ink transition-colors"
             >
               {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -230,7 +232,8 @@ function ArchetypeCard({
               target="_blank"
               rel="noreferrer"
               title="Inspect on Etherscan"
-              className="text-ink-tertiary hover:text-primary transition-colors"
+              aria-label="Inspect on Etherscan"
+              className="text-ink-tertiary hover:text-primary-text transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
@@ -248,12 +251,19 @@ function ArchetypeCard({
             accentColor={contract.relayers <= 5 ? 'text-red-400' : 'text-emerald-400'}
           />
 
+          {/* Re-delegation and median nonce use a log scale, mirroring
+              BimodalChart's authorization bars: both ranges span several
+              orders of magnitude (redelegation up to ~1379x, nonce up to
+              ~487k), so a linear scale renders every contract but the most
+              extreme outlier as an indistinguishable sliver at the floor.
+              Relayers and funded ratio stay linear — their ranges are
+              well-behaved (bounded counts / percentages). */}
           <SignalIndicator
             name="redelegation"
             label="Re-delegation Ratio"
             value={contract.redelegation}
             formattedValue={`${contract.redelegation.toFixed(2)}×`}
-            pct={(contract.redelegation / scales.maxRedelegation) * 100}
+            pct={(Math.log10(1 + contract.redelegation) / Math.log10(1 + scales.maxRedelegation)) * 100}
             accentColor={contract.redelegation > 2 ? 'text-amber-400' : 'text-emerald-400'}
           />
 
@@ -262,7 +272,7 @@ function ArchetypeCard({
             label="Median Nonce"
             value={contract.medNonce}
             formattedValue={contract.medNonce.toLocaleString()}
-            pct={contract.medNonce === 0 ? 3 : (contract.medNonce / scales.maxMedNonce) * 100}
+            pct={(Math.log10(1 + contract.medNonce) / Math.log10(1 + scales.maxMedNonce)) * 100}
           />
 
           <SignalIndicator
@@ -283,7 +293,7 @@ function ArchetypeCard({
       {/* Takeaway footer */}
       <div className="mt-6 pt-3 border-t border-hairline/60">
         <p className="text-xs text-ink-subtle leading-relaxed italic">
-          <span className="text-primary font-mono not-italic mr-1.5">Evidence:</span>
+          <span className="text-primary-text font-mono not-italic mr-1.5">Evidence:</span>
           {archetype.takeaway}
         </p>
       </div>

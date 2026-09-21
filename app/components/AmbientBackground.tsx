@@ -193,12 +193,6 @@ export function AmbientBackground({ feed }: AmbientBackgroundProps) {
   const shouldPauseAuroras = isTabHidden || !isHeroInView;
   const shouldPausePrism = isTabHidden || !feed.isPolling;
 
-  // Short addresses for truthful badge rendering
-  const latestAuthority = feed.lastDetection?.delegation.authority;
-  const shortAuthority = latestAuthority
-    ? `${latestAuthority.slice(0, 6)}...${latestAuthority.slice(-4)}`
-    : null;
-
   return (
     <>
       {/* Sentinel for IntersectionObserver to track when Hero leaves viewport */}
@@ -460,64 +454,13 @@ export function AmbientBackground({ feed }: AmbientBackgroundProps) {
                   )}
                 </g>
               </svg>
-
-              {/* 3 Real Data-Driven Floating Badges (Visible in Hero mode, fade out on scroll) */}
-              <div
-                className="transition-opacity duration-300 pointer-events-none"
-                style={{
-                  opacity: Math.max(0, 1 - scrollProgress * 2.2),
-                }}
-              >
-                {/* Badge 1: Cryptographically Recovered Signing Authority */}
-                <div
-                  className={`absolute top-[28%] -left-6 px-2.5 py-1 rounded bg-surface-2/95 border font-mono text-xs text-ink backdrop-blur-md tracking-wider shadow-lg transition-colors duration-300 ${
-                    pulseActive
-                      ? 'border-emerald-400 bg-emerald-950/40 shadow-emerald-500/20'
-                      : 'border-hairline'
-                  }`}
-                >
-                  <span
-                    className={`inline-block mr-1 font-bold ${
-                      feed.isPolling ? 'text-emerald-400 animate-pulse' : 'text-ink-tertiary'
-                    }`}
-                  >
-                    ●
-                  </span>{' '}
-                  <span className="text-ink-subtle">auth:</span>{' '}
-                  <span className="font-medium text-ink">
-                    {shortAuthority
-                      ? shortAuthority
-                      : feed.isPolling
-                      ? 'monitoring'
-                      : 'paused'}
-                  </span>
-                </div>
-
-                {/* Badge 2: Live Ethereum Block Number */}
-                <div className="absolute top-[14%] right-2 px-2.5 py-1 rounded bg-surface-2/95 border border-hairline font-mono text-xs text-indigo-300 backdrop-blur-md tracking-wider shadow-lg">
-                  <span className="text-ink-tertiary mr-1">block:</span>
-                  <span className="font-medium">
-                    {feed.latestBlock ? `#${feed.latestBlock.toLocaleString()}` : 'syncing...'}
-                  </span>
-                </div>
-
-                {/* Badge 3: Session Recovered Count / Stream Status */}
-                <div className="absolute bottom-[14%] right-4 px-2.5 py-1 rounded bg-surface-2/95 border border-hairline font-mono text-xs text-ink-muted backdrop-blur-md tracking-wider shadow-lg">
-                  {feed.detections.length > 0 ? (
-                    <span className="text-emerald-400 font-medium">
-                      {feed.detections.length} live recovered
-                    </span>
-                  ) : feed.isPolling ? (
-                    <span className="text-ink-subtle">monitoring 0x4 tuples</span>
-                  ) : (
-                    <span className="text-ink-tertiary">stream paused</span>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Persistent Docked Live Status Pill (Fades in when scrolled to LiveFeed and beyond) */}
+          {/* Persistent Docked Live Status Indicator (Fades in when scrolled to
+              LiveFeed and beyond). Purely a connection-state dot — no block
+              number or detection count here, since LiveFeed is the single
+              authoritative live readout on the page. */}
           <div
             className="absolute top-1/2 -left-64 -translate-y-1/2 transition-opacity duration-300"
             style={{
@@ -544,19 +487,7 @@ export function AmbientBackground({ feed }: AmbientBackgroundProps) {
               </span>
 
               <span className="text-ink font-medium">
-                {feed.isPolling
-                  ? feed.latestBlock
-                    ? `#${feed.latestBlock.toLocaleString()}`
-                    : 'Syncing...'
-                  : 'Stream Paused'}
-              </span>
-
-              <span className="text-hairline-strong">|</span>
-
-              <span className="text-emerald-400 font-semibold">
-                {feed.detections.length > 0
-                  ? `${feed.detections.length} recovered`
-                  : '0x4 active'}
+                {feed.isPolling ? 'Live' : 'Paused'}
               </span>
 
               {pulseActive && (
