@@ -13,3 +13,7 @@ dist/
 
 # Vercel CLI link state — project and org ids, written by `vercel deploy`
 .vercel/
+
+# Generated output directories
+brag-output*/
+gallery/
